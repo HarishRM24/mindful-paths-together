@@ -1,10 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Calendar, User } from 'lucide-react';
+import { MessageSquare, Calendar, User, BookOpen, Award, Bell } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 const YouthHome: React.FC = () => {
+  const { toast } = useToast();
+  const [selectedMood, setSelectedMood] = useState<number>(3);
+  const [streakCount, setStreakCount] = useState<number>(7);
+  
   // Sample data for mood history
   const moodHistory = [
     { day: 'Mon', score: 6 },
@@ -18,40 +23,89 @@ const YouthHome: React.FC = () => {
 
   // Calculate max height for mood graph
   const maxHeight = 80; // Max height in pixels
+  
+  // Sample upcoming activities
+  const activities = [
+    { time: "3:00 PM", title: "Meditation Session" },
+    { time: "5:30 PM", title: "Group Chat" }
+  ];
+  
+  // Journal prompts
+  const journalPrompts = [
+    "What made you smile today?",
+    "What's one thing you're grateful for?",
+    "How did you practice self-care today?"
+  ];
+
+  const saveMood = () => {
+    toast({
+      title: "Mood Saved",
+      description: "Your mood has been recorded for today",
+    });
+  };
 
   return (
-    <div className="w-full space-y-6 animate-fade-in">
-      {/* Greeting */}
-      <div className="mb-6">
-        <h1 className="title-large mb-1">Hey Taylor</h1>
-        <p className="text-app-gray-dark">How are you feeling today?</p>
+    <div className="w-full space-y-6 animate-fade-in pb-20">
+      {/* Header with streak info */}
+      <div className="flex justify-between items-center mb-2">
+        <div>
+          <h1 className="title-large mb-1">Hey Taylor</h1>
+          <p className="text-app-gray-dark">How are you feeling today?</p>
+        </div>
+        <div className="bg-primary/10 p-2 rounded-full flex items-center">
+          <Award className="text-primary mr-1 h-5 w-5" />
+          <span className="font-semibold">{streakCount} days</span>
+        </div>
       </div>
       
       {/* Mood checker */}
-      <Card className="youth-card p-5">
+      <Card className="youth-card p-5 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-bl-3xl" />
         <h2 className="title-small mb-4">My Mood Today</h2>
         <div className="flex justify-between items-center mb-6">
           {['😔', '😕', '😐', '🙂', '😄'].map((emoji, index) => (
             <Button
               key={index}
-              variant={index === 3 ? "default" : "outline"}
+              variant={index === selectedMood ? "default" : "outline"}
               className={`rounded-full h-14 w-14 text-2xl ${
-                index === 3 ? 'bg-primary text-white' : ''
+                index === selectedMood ? 'bg-primary text-white' : ''
               }`}
+              onClick={() => setSelectedMood(index)}
             >
               {emoji}
             </Button>
           ))}
         </div>
-        <Button className="w-full btn-medium">
+        <Button className="w-full btn-medium" onClick={saveMood}>
           Save Today's Mood
         </Button>
       </Card>
       
+      {/* Upcoming Activities */}
+      <Card className="youth-card p-5">
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="title-small">Upcoming Activities</h2>
+          <Button variant="ghost" size="sm" className="text-primary p-0">See all</Button>
+        </div>
+        <div className="space-y-2">
+          {activities.map((activity, index) => (
+            <div key={index} className="flex items-center p-3 bg-secondary/10 rounded-lg">
+              <div className="w-12 h-12 rounded-full bg-secondary/20 flex items-center justify-center mr-3">
+                <Bell size={18} className="text-secondary" />
+              </div>
+              <div>
+                <p className="font-medium">{activity.title}</p>
+                <p className="text-app-gray-dark text-sm">{activity.time}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+      
       {/* Mood History */}
       <Card className="youth-card">
-        <h2 className="title-small mb-3">My Mood This Week</h2>
-        <div className="flex items-end justify-between h-24 mb-2">
+        <h2 className="title-small mb-3 p-4 pb-0">My Mood This Week</h2>
+        <div className="flex items-end justify-between h-24 px-4 mb-2">
           {moodHistory.map((day, index) => (
             <div key={index} className="flex flex-col items-center">
               <div 
@@ -65,6 +119,24 @@ const YouthHome: React.FC = () => {
             </div>
           ))}
         </div>
+      </Card>
+      
+      {/* Journal Prompt */}
+      <Card className="youth-card p-5 bg-gradient-to-br from-accent/5 to-accent/20">
+        <div className="flex items-start mb-3">
+          <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mr-3">
+            <BookOpen size={18} className="text-accent" />
+          </div>
+          <div>
+            <h2 className="title-small mb-1">Journal Prompt</h2>
+            <p className="text-app-gray-dark">
+              {journalPrompts[Math.floor(Math.random() * journalPrompts.length)]}
+            </p>
+          </div>
+        </div>
+        <Button variant="outline" className="w-full mt-2">
+          Open Journal
+        </Button>
       </Card>
       
       {/* Quick actions */}
