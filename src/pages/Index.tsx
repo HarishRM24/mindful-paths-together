@@ -1,13 +1,27 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import AppLayout from '@/components/layout/AppLayout';
+import UserTypeSelection from '@/components/onboarding/UserTypeSelection';
+import SeniorHome from '@/components/senior/SeniorHome';
+import YouthHome from '@/components/youth/YouthHome';
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+  // In a real app, this would be stored in persistent storage
+  // and managed through authentication/user profiles
+  const [userType, setUserType] = useState<'senior' | 'youth' | null>(null);
+  
+  if (!userType) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <UserTypeSelection onSelect={setUserType} />
       </div>
-    </div>
+    );
+  }
+  
+  return (
+    <AppLayout>
+      {userType === 'senior' ? <SeniorHome /> : <YouthHome />}
+    </AppLayout>
   );
 };
 

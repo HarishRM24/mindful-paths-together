@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -12,7 +13,7 @@ export default {
 	theme: {
 		container: {
 			center: true,
-			padding: '2rem',
+			padding: '1rem',
 			screens: {
 				'2xl': '1400px'
 			}
@@ -61,7 +62,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+        app: {
+          blue: '#4A90E2',
+          green: '#50C878',
+          orange: '#F97316',
+          gray: {
+            light: '#F1F1F1',
+            medium: '#C8C8C9',
+            dark: '#8E9196'
+          }
+        }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,12 +95,27 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+        'pulse-gentle': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.8' }
+        },
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' }
+        }
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+        'pulse-gentle': 'pulse-gentle 2s ease-in-out infinite',
+        'fade-in': 'fade-in 0.5s ease-out'
+			},
+      fontSize: {
+        '2xl-mobile': 'clamp(1.5rem, 5vw, 1.75rem)',
+        'xl-mobile': 'clamp(1.25rem, 4vw, 1.5rem)',
+        'lg-mobile': 'clamp(1.125rem, 3.5vw, 1.25rem)',
+      }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
