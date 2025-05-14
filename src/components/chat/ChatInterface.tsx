@@ -177,55 +177,57 @@ const ChatInterface = () => {
 
   return (
     <div className="flex flex-col h-[calc(100vh-200px)] max-h-[700px]">
-      <Card className="flex-1 overflow-hidden flex flex-col p-0">
-        <div className="p-4 border-b flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold flex items-center">
-              <Bot className="mr-2 h-5 w-5 text-primary" />
-              AI Wellness Assistant
-            </h2>
-            <p className="text-sm text-app-gray-dark">Your personal mental wellness companion</p>
+      <Card className="flex-1 overflow-hidden flex flex-col p-0 shadow-md border-app-gray-light bg-gradient-to-b from-white to-app-gray-light/20">
+        <div className="p-4 border-b border-app-gray-light bg-app-gray-light/10 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold flex items-center text-app-blue">
+                <Bot className="mr-2 h-5 w-5 text-app-blue" />
+                AI Wellness Assistant
+              </h2>
+              <p className="text-sm text-app-gray-dark">Your personal mental wellness companion</p>
+            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-app-gray-dark hover:text-app-blue hover:bg-app-blue/10">
+                    <Info className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs">
+                    This AI assistant is designed to provide emotional support. For serious mental health issues, please contact a professional.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Info className="h-5 w-5 text-muted-foreground" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-xs">
-                  This AI assistant is designed to provide emotional support. For serious mental health issues, please contact a professional.
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-br from-white to-app-gray-light/10">
           {messages.map((message) => (
             <div
               key={message.id}
               className={`flex items-start gap-2 ${
                 message.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
+              } animate-fade-in`}
             >
               {message.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Bot size={18} className="text-primary" />
+                <div className="w-8 h-8 rounded-full bg-app-blue/10 flex items-center justify-center shadow-sm">
+                  <Bot size={18} className="text-app-blue" />
                 </div>
               )}
               
               <div
-                className={`max-w-[80%] rounded-lg p-3 ${
+                className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${
                   message.role === 'user'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-secondary/20'
+                    ? 'bg-gradient-to-r from-app-blue to-app-blue/90 text-white'
+                    : 'bg-gradient-to-r from-white to-app-gray-light/20 border border-app-gray-light/20'
                 }`}
               >
                 <p className="text-sm">{message.content}</p>
-                <div className="flex items-center justify-between mt-1">
-                  <p className="text-xs opacity-70">
+                <div className="flex items-center justify-between mt-2 text-opacity-70">
+                  <p className={`text-xs ${message.role === 'user' ? 'text-white/70' : 'text-app-gray-dark/70'}`}>
                     {message.timestamp.toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit',
@@ -238,22 +240,22 @@ const ChatInterface = () => {
               </div>
               
               {message.role === 'user' && (
-                <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
-                  <User size={18} className="text-accent" />
+                <div className="w-8 h-8 rounded-full bg-app-orange/10 flex items-center justify-center shadow-sm">
+                  <User size={18} className="text-app-orange" />
                 </div>
               )}
             </div>
           ))}
           
           {isLoading && (
-            <div className="flex items-center justify-start gap-2">
-              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                <Bot size={18} className="text-primary" />
+            <div className="flex items-center justify-start gap-2 animate-fade-in">
+              <div className="w-8 h-8 rounded-full bg-app-blue/10 flex items-center justify-center shadow-sm">
+                <Bot size={18} className="text-app-blue" />
               </div>
-              <div className="flex items-center space-x-1 p-3 rounded-lg bg-secondary/20">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse delay-150"></div>
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse delay-300"></div>
+              <div className="flex items-center space-x-2 p-4 rounded-2xl bg-white border border-app-gray-light/20 shadow-sm">
+                <div className="w-2 h-2 rounded-full bg-app-blue animate-pulse-gentle"></div>
+                <div className="w-2 h-2 rounded-full bg-app-blue animate-pulse-gentle delay-150"></div>
+                <div className="w-2 h-2 rounded-full bg-app-blue animate-pulse-gentle delay-300"></div>
               </div>
             </div>
           )}
@@ -261,22 +263,22 @@ const ChatInterface = () => {
           <div ref={messagesEndRef} />
         </div>
         
-        <div className="border-t p-2">
-          <Tabs value={activeCategory} onValueChange={(v) => setActiveCategory(v as SuggestionCategory)} className="mb-2">
-            <TabsList className="w-full">
-              <TabsTrigger value="general" className="flex-1">General</TabsTrigger>
-              <TabsTrigger value="anxiety" className="flex-1">Anxiety</TabsTrigger>
-              <TabsTrigger value="loneliness" className="flex-1">Loneliness</TabsTrigger>
-              <TabsTrigger value="motivation" className="flex-1">Motivation</TabsTrigger>
+        <div className="border-t border-app-gray-light/20 p-4 bg-white/80 backdrop-blur-sm">
+          <Tabs value={activeCategory} onValueChange={(v) => setActiveCategory(v as SuggestionCategory)} className="mb-3">
+            <TabsList className="w-full bg-app-gray-light/20 p-1">
+              <TabsTrigger value="general" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-app-blue">General</TabsTrigger>
+              <TabsTrigger value="anxiety" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-app-blue">Anxiety</TabsTrigger>
+              <TabsTrigger value="loneliness" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-app-blue">Loneliness</TabsTrigger>
+              <TabsTrigger value="motivation" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-app-blue">Motivation</TabsTrigger>
             </TabsList>
           </Tabs>
           
-          <div className="px-2 mb-3 overflow-x-auto flex gap-2">
+          <div className="px-2 mb-4 overflow-x-auto flex gap-2">
             {suggestions[activeCategory].map((suggestion, index) => (
               <button
                 key={index}
                 onClick={() => handleSuggestionClick(suggestion)}
-                className="text-xs py-1 px-3 border rounded-full whitespace-nowrap hover:bg-muted"
+                className="text-xs py-1.5 px-3 border border-app-gray-light/30 rounded-full whitespace-nowrap hover:bg-app-blue/10 hover:border-app-blue/30 transition-colors duration-200 shadow-sm"
               >
                 {suggestion}
               </button>
@@ -290,12 +292,13 @@ const ChatInterface = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
               disabled={isLoading}
-              className="flex-1"
+              className="flex-1 border-app-gray-light/30 focus-visible:ring-app-blue/30 rounded-full pl-4 py-6"
             />
             <Button 
               onClick={handleSend} 
               disabled={isLoading || !input.trim()}
               size="icon"
+              className="rounded-full h-10 w-10 bg-app-blue hover:bg-app-blue/90 text-white shadow-sm"
             >
               <Send className="h-4 w-4" />
             </Button>
