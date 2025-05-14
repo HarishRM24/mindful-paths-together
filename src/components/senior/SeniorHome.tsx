@@ -26,6 +26,8 @@ const SeniorHome: React.FC = () => {
   ];
 
   const toggleTask = (index: number) => {
+    const isTaskCompleted = completedTasks.includes(index);
+    
     setCompletedTasks(prev => 
       prev.includes(index) 
         ? prev.filter(i => i !== index) 
@@ -33,7 +35,7 @@ const SeniorHome: React.FC = () => {
     );
     
     toast({
-      title: prev.includes(index) ? "Task marked incomplete" : "Task completed",
+      title: isTaskCompleted ? "Task marked incomplete" : "Task completed",
       description: todayReminders[index].title,
     });
   };
