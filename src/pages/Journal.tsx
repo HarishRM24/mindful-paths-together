@@ -1,11 +1,10 @@
-
 import React, { useState, useRef } from 'react';
 import AppLayout from '@/components/layout/AppLayout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { Mic, StopCircle, Save, BookOpen, PenLine, Waveform, Calendar } from 'lucide-react';
+import { Mic, StopCircle, Save, BookOpen, PenLine, AudioWaveform, Calendar } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { format } from 'date-fns';
 
@@ -200,7 +199,7 @@ const JournalPage = () => {
               <div className="bg-muted p-4 rounded-md mb-4 flex items-center justify-center min-h-24">
                 {recording ? (
                   <div className="flex flex-col items-center">
-                    <Waveform className="h-12 w-12 text-primary animate-pulse" />
+                    <AudioWaveform className="h-12 w-12 text-primary animate-pulse" />
                     <span className="text-sm mt-2">Recording...</span>
                   </div>
                 ) : (
@@ -259,7 +258,7 @@ const JournalPage = () => {
                 ) : (
                   <div className="mt-2">
                     <div className="flex items-center bg-muted p-3 rounded-md">
-                      <Waveform className="h-5 w-5 mr-2 text-primary" />
+                      <AudioWaveform className="h-5 w-5 mr-2 text-primary" />
                       <span className="text-sm">Voice Recording</span>
                       <Button variant="ghost" size="sm" className="ml-auto">
                         Play
