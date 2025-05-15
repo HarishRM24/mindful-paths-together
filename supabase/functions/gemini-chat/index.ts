@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
+const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || "AIzaSyBe7GlMox_fBL7N7Eb1RWx1idjNGM2UY50";
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
 serve(async (req) => {
@@ -29,6 +29,8 @@ serve(async (req) => {
       role: 'user',
       parts: [{ text: message }]
     });
+    
+    console.log('Calling Gemini API with formatted history:', JSON.stringify(formattedHistory));
 
     const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
       method: 'POST',
@@ -65,11 +67,15 @@ serve(async (req) => {
     });
 
     const data = await response.json();
+    console.log('Gemini API response:', JSON.stringify(data));
 
     // Extract the response text
     let responseText = "I'm sorry, I couldn't generate a response.";
     if (data.candidates && data.candidates[0] && data.candidates[0].content) {
       responseText = data.candidates[0].content.parts[0].text;
+    } else if (data.error) {
+      console.error('Gemini API error:', data.error);
+      responseText = `AI Error: ${data.error.message || 'Unknown error occurred'}`;
     }
 
     return new Response(JSON.stringify({ response: responseText }), {
