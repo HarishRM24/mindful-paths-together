@@ -4,10 +4,20 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, Bell, Home, Search, Brain, Clock, Heart, Phone } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SeniorHome: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [completedTasks, setCompletedTasks] = useState<number[]>([0, 1]);
+  
+  // Get the user's name from auth context
+  const firstName = user?.name?.split(' ')[0] || 'Friend';
+  
+  // Get current date
+  const today = new Date();
+  const options: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+  const formattedDate = today.toLocaleDateString('en-US', options);
   
   // Sample data for today's reminders
   const todayReminders = [
@@ -50,10 +60,10 @@ const SeniorHome: React.FC = () => {
 
   return (
     <div className="w-full space-y-6 animate-fade-in pb-20">
-      {/* Good morning/afternoon greeting */}
+      {/* Dynamic greeting with real user name */}
       <div className="mb-5">
-        <h1 className="title-large mb-1">Good Afternoon, Joan</h1>
-        <p className="text-app-gray-dark">Tuesday, May 14, 2025</p>
+        <h1 className="title-large mb-1">Good Afternoon, {firstName}</h1>
+        <p className="text-app-gray-dark">{formattedDate}</p>
       </div>
       
       {/* Health metrics cards */}

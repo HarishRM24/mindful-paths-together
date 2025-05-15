@@ -4,11 +4,16 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Calendar, User, BookOpen, Award, Bell } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const YouthHome: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [selectedMood, setSelectedMood] = useState<number>(3);
   const [streakCount, setStreakCount] = useState<number>(7);
+  
+  // Get the user's name from auth context
+  const firstName = user?.name?.split(' ')[0] || 'Friend';
   
   // Sample data for mood history
   const moodHistory = [
@@ -46,10 +51,10 @@ const YouthHome: React.FC = () => {
 
   return (
     <div className="w-full space-y-6 animate-fade-in pb-20">
-      {/* Header with streak info */}
+      {/* Header with streak info and user's real name */}
       <div className="flex justify-between items-center mb-2">
         <div>
-          <h1 className="title-large mb-1">Hey Taylor</h1>
+          <h1 className="title-large mb-1">Hey {firstName}</h1>
           <p className="text-app-gray-dark">How are you feeling today?</p>
         </div>
         <div className="bg-primary/10 p-2 rounded-full flex items-center">

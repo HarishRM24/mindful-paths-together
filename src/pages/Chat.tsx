@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const Chat = () => {
   const { user } = useAuth();
-  const firstName = user?.user_metadata?.name?.split(' ')[0] || 'there';
+  const firstName = user?.name?.split(' ')[0] || 'there';
 
   return (
     <AppLayout>
