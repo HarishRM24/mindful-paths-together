@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import { supabase } from "@/integrations/supabase/client";
 
 type User = {
   id: string;
@@ -36,39 +37,89 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Check for saved user on initial load
   useEffect(() => {
-    const savedUser = localStorage.getItem('mindSync_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
+    const checkUser = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (data.session) {
+        const savedUserRole = localStorage.getItem('mindSync_userRole') as 'senior' | 'youth' || 'youth';
+        const savedUserName = localStorage.getItem('mindSync_userName');
+        
+        const supabaseUser = data.session.user;
+        
+        // Create a user object with data from Supabase and local storage
+        const currentUser: User = {
+          id: supabaseUser.id,
+          name: savedUserName || supabaseUser.email?.split('@')[0] || 'User',
+          email: supabaseUser.email || '',
+          role: savedUserRole,
+        };
+        
+        setUser(currentUser);
+        localStorage.setItem('mindSync_user', JSON.stringify(currentUser));
+      }
+      
+      setLoading(false);
+    };
+    
+    checkUser();
+    
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        const savedUserRole = localStorage.getItem('mindSync_userRole') as 'senior' | 'youth' || 'youth';
+        const savedUserName = localStorage.getItem('mindSync_userName');
+        
+        const supabaseUser = session.user;
+        
+        // Create a user object with data from Supabase and local storage
+        const currentUser: User = {
+          id: supabaseUser.id,
+          name: savedUserName || supabaseUser.email?.split('@')[0] || 'User',
+          email: supabaseUser.email || '',
+          role: savedUserRole,
+        };
+        
+        setUser(currentUser);
+        localStorage.setItem('mindSync_user', JSON.stringify(currentUser));
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        localStorage.removeItem('mindSync_user');
+      }
+    });
+    
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Mock login function - in a real app, this would call an API
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo purposes, accept any non-empty email/password
-      if (!email || !password) {
-        throw new Error('Email and password are required');
-      }
-      
-      // Create a mock user
-      const mockUser: User = {
-        id: '123456',
-        name: email.split('@')[0],
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        role: localStorage.getItem('mindSync_userRole') as 'senior' | 'youth' || 'youth',
+        password
+      });
+      
+      if (error) throw error;
+      
+      const savedUserRole = localStorage.getItem('mindSync_userRole') as 'senior' | 'youth' || 'youth';
+      
+      // Create a user object with data from Supabase and local storage
+      const currentUser: User = {
+        id: data.user.id,
+        name: data.user.email?.split('@')[0] || 'User',
+        email: data.user.email || '',
+        role: savedUserRole,
       };
       
-      setUser(mockUser);
-      localStorage.setItem('mindSync_user', JSON.stringify(mockUser));
+      setUser(currentUser);
+      localStorage.setItem('mindSync_user', JSON.stringify(currentUser));
+      localStorage.setItem('mindSync_userName', currentUser.name);
       
       toast({
         title: 'Welcome back!',
-        description: `Logged in as ${mockUser.name}`,
+        description: `Logged in as ${currentUser.name}`,
       });
     } catch (error) {
       let message = 'An error occurred during login';
@@ -86,32 +137,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Mock signup function
+  // Signup function
   const signup = async (name: string, email: string, password: string, role: 'senior' | 'youth') => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (!name || !email || !password) {
-        throw new Error('Name, email, and password are required');
-      }
-      
-      const mockUser: User = {
-        id: Date.now().toString(),
-        name,
+      const { data, error } = await supabase.auth.signUp({
         email,
-        role,
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('mindSync_user', JSON.stringify(mockUser));
-      localStorage.setItem('mindSync_userRole', role);
-      
-      toast({
-        title: 'Account created!',
-        description: `Welcome to MindSync, ${name}!`,
+        password,
       });
+      
+      if (error) throw error;
+      
+      if (data.user) {
+        const newUser: User = {
+          id: data.user.id,
+          name,
+          email: data.user.email || '',
+          role,
+        };
+        
+        setUser(newUser);
+        localStorage.setItem('mindSync_user', JSON.stringify(newUser));
+        localStorage.setItem('mindSync_userRole', role);
+        localStorage.setItem('mindSync_userName', name);
+        
+        toast({
+          title: 'Account created!',
+          description: `Welcome to MindSync, ${name}!`,
+        });
+      }
     } catch (error) {
       let message = 'An error occurred during sign up';
       if (error instanceof Error) {
@@ -128,7 +182,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error signing out:', error.message);
+    }
     setUser(null);
     localStorage.removeItem('mindSync_user');
     toast({
