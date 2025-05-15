@@ -42,7 +42,11 @@ const AppHeader: React.FC = () => {
     <header className="w-full bg-background border-b border-border py-3 px-4 sticky top-0 z-10">
       <div className="flex items-center justify-between max-w-4xl mx-auto">
         <Link to="/" className="flex items-center">
-          <span className="font-bold text-xl text-primary">MindSync</span>
+          <img 
+            src="/lovable-uploads/7aea7a8c-cc87-428f-b574-33cab5cca8f3.png" 
+            alt="MindSync Logo" 
+            className="h-10 mr-2" 
+          />
         </Link>
         
         <div className="flex items-center space-x-2">
@@ -57,7 +61,7 @@ const AppHeader: React.FC = () => {
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-primary text-primary-foreground">
-                        {getInitials(user.name)}
+                        {getInitials(user.name || 'User')}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -66,11 +70,11 @@ const AppHeader: React.FC = () => {
                   <div className="flex items-center justify-start gap-2 p-2">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-primary text-primary-foreground">
-                        {getInitials(user.name)}
+                        {getInitials(user.name || 'User')}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
+                      <p className="text-sm font-medium leading-none">{user.name || 'User'}</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}
                       </p>

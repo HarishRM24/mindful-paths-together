@@ -67,6 +67,8 @@ export default {
           blue: '#4A90E2',
           green: '#50C878',
           orange: '#F97316',
+          teal: '#00A19C', // Added teal color from logo
+          navy: '#002A3A', // Added navy color from logo text
           gray: {
             light: '#F1F1F1',
             medium: '#C8C8C9',
