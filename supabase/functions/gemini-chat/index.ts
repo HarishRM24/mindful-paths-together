@@ -8,8 +8,8 @@ const corsHeaders = {
 
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || "AIzaSyBe7GlMox_fBL7N7Eb1RWx1idjNGM2UY50";
 
-// Updated to use the generative language API with the correct endpoint
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.0-pro:generateContent";
+// Updated to use the correct Gemini model name
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
 serve(async (req) => {
   // Handle CORS preflight requests
